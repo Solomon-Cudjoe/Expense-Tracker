@@ -3,11 +3,22 @@ import dotenv from "dotenv";
 import { sql } from "./config/db.js";
 import ratelimiter from "./middleware/rateLimiter.js";
 import transactionsRoutes from "./routes/transactionsRoutes.js";
+import job from "./config/cron.js";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use("/api/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
+// Start cron job to send GET request every 14 minutes
+
+if (process.env.NODE_ENV === "production") {
+  job.start();
+}
 
 //middlewares
 app.use(ratelimiter);
