@@ -11,7 +11,7 @@ export const useTransactions = (userId) => {
     balance: 0,
   });
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchTransactions = useCallback(async () => {
     try {
@@ -24,7 +24,7 @@ export const useTransactions = (userId) => {
   }, [userId]);
   const fetchSummary = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/transactions/${userId}`);
+      const response = await fetch(`${API_URL}/transactions/summary/${userId}`);
       const data = await response.json();
       setSummary(data);
     } catch (error) {
@@ -35,14 +35,14 @@ export const useTransactions = (userId) => {
   const loadData = useCallback(async () => {
     if (!userId) return;
 
-    setLoading(true);
+    setIsLoading(true);
     try {
       // Fetch transactions and summary in parallel
       await Promise.all([fetchTransactions(), fetchSummary()]);
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [fetchTransactions, fetchSummary, userId]);
 
@@ -71,7 +71,7 @@ export const useTransactions = (userId) => {
   return {
     transactions,
     summary,
-    loading,
+    isLoading,
     loadData,
     deleteTransaction,
   };
